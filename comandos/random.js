@@ -2,7 +2,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const {Pool} = require('pg');
 
-const config = { user: 'postgres', host: 'localhost', password: 'postgres', database: 'anidbb'};
+const config = { user: 'utrnqxgxchjivp', host: '    ec2-184-73-25-2.compute-1.amazonaws.com', password: '    ce10510515d7012b57ad0baef48ee34e624b1a4a60e98920bc4c53ec8d16ede3', database: 'd8596j1pu1rlhs'};
 
 const pool = new Pool(config);
 
