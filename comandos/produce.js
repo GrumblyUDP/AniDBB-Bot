@@ -16,18 +16,26 @@ module.exports =
 	,
 	async execute(interaction) 
 	{
-		const productora = interaction.options.getString('nombre');
+		try
+		{
+			const productora = interaction.options.getString('nombre');
 
-		const queryFullName = await pool.query('SELECT nombre_productora FROM Productora WHERE nombre_productora LIKE ' + "'%" + `${productora}` + "%' ");
+			const queryFullName = await pool.query('SELECT nombre_productora FROM Productora WHERE nombre_productora LIKE ' + "'%" + `${productora}` + "%' ");
 
-		const fullName = queryFullName.rows[0].nombre_productora;
+			const fullName = queryFullName.rows[0].nombre_productora;
 
-		const res = await pool.query('SELECT nombre_anime FROM Anime, Productora WHERE nombre_productora LIKE '+ "'%" + `${productora}` + "%' " + 'AND Anime.id_productora = Productora.id;');
+			const res = await pool.query('SELECT nombre_anime FROM Anime, Productora WHERE nombre_productora LIKE '+ "'%" + `${productora}` + "%' " + 'AND Anime.id_productora = Productora.id;');
 
-		var producidos = "";
-		res.rows.forEach(element => (producidos= producidos + "-" + `${element.nombre_anime}` + "\n"));
+			var producidos = "";
+			res.rows.forEach(element => (producidos= producidos + "-" + `${element.nombre_anime}` + "\n"));
 
-		await interaction.editReply("Animes producidos por " + fullName + ": \n" + producidos);
+			await interaction.editReply("Animes producidos por " + fullName + ": \n" + producidos);
 
+		}
+		catch (error)
+		{
+			console.log(error);
+			await interaction.editReply("Error: Intenta nuevamente");
+		}
 	},
 };

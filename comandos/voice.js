@@ -15,17 +15,27 @@ module.exports = {
 	,
 	async execute(interaction) 
 	{
-		const actName = interaction.options.getString('nombre');
 
-		const res = await pool.query('SELECT nombre_actor, edad, nombre_personaje, nombre_anime FROM Actor_de_voz, Personajes, Anime, Graba WHERE nombre_actor LIKE ' + "'%" + `${actName}` + "%' " + 'AND Personajes.id_actor = Actor_de_voz.id AND Actor_de_voz.id = Graba.id_actor AND Anime.id = Graba.id_anime;');
+		try
+		{
+			const actName = interaction.options.getString('nombre');
 
-		var personajes = "";
-		res.rows.forEach(element => (personajes = personajes + "-" + `${element.nombre_personaje}` + "\n\t"));
-		
-		var animes = "";
-		res.rows.forEach(element => (animes = animes + "-" + `${element.nombre_anime}` + "\n\t"));
+				const res = await pool.query('SELECT nombre_actor, edad, nombre_personaje, nombre_anime FROM Actor_de_voz, Personajes, Anime, Graba WHERE nombre_actor LIKE ' + "'%" + `${actName}` + "%' " + 'AND Personajes.id_actor = Actor_de_voz.id AND Actor_de_voz.id = Graba.id_actor AND Anime.id = Graba.id_anime;');
 
-		await interaction.editReply("Informacion sobre actor/actriz: \n" + "\n-Nombre: " + `${res.rows[0].nombre_actor}` + "\n" + "\n-Edad: " + `${res.rows[0].edad}` + "\n" + "\n-Personajes interpretados: \n" + "\t" + personajes + "\n-Animes en los que ha participado: \n" + "\t" + animes);
+				var personajes = "";
+				res.rows.forEach(element => (personajes = personajes + "-" + `${element.nombre_personaje}` + "\n\t"));
+				
+				var animes = "";
+				res.rows.forEach(element => (animes = animes + "-" + `${element.nombre_anime}` + "\n\t"));
 
+				await interaction.editReply("Informacion sobre actor/actriz: \n" + "\n-Nombre: " + `${res.rows[0].nombre_actor}` + "\n" + "\n-Edad: " + `${res.rows[0].edad}` + "\n" + "\n-Personajes interpretados: \n" + "\t" + personajes + "\n-Animes en los que ha participado: \n" + "\t" + animes);
+
+		}
+		catch (error)
+		{
+			console.log(error);
+			await interaction.editReply("Error: Intenta nuevamente");
+		}
+	
 	},
 };

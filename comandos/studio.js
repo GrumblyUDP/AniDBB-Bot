@@ -15,16 +15,25 @@ module.exports = {
 	,
 	async execute(interaction) 
 	{
-		const studioName = interaction.options.getString('nombre');
+		try
+		{
+			const studioName = interaction.options.getString('nombre');
 
-		const res = await pool.query('SELECT e.nombre_estudio, a.nombre_anime FROM estudio_de_animacion AS e, anime AS a WHERE e.nombre_estudio LIKE ' + "'%" + `${studioName}` + "%' " + 'AND a.id_estudio = e.id;');
+			const res = await pool.query('SELECT e.nombre_estudio, a.nombre_anime FROM estudio_de_animacion AS e, anime AS a WHERE e.nombre_estudio LIKE ' + "'%" + `${studioName}` + "%' " + 'AND a.id_estudio = e.id;');
 
 
-		var animesDone = "";
-		res.rows.forEach(element => (animesDone = animesDone + "-" + `${element.nombre_anime}` + "\n\t"));
-		
+			var animesDone = "";
+			res.rows.forEach(element => (animesDone = animesDone + "-" + `${element.nombre_anime}` + "\n\t"));
+			
 
-		await interaction.editReply("Informacion sobre el estudio consultado: \n" + "\n-Nombre: " + `${res.rows[0].nombre_estudio}` + "\n" + "\n-Animes hechos por este estudio: \n" + "\t" + animesDone);
+			await interaction.editReply("Informacion sobre el estudio consultado: \n" + "\n-Nombre: " + `${res.rows[0].nombre_estudio}` + "\n" + "\n-Animes hechos por este estudio: \n" + "\t" + animesDone);
+
+		}
+		catch (error)
+		{
+			console.log(error);
+			await interaction.editReply("Error: Intenta nuevamente");
+		}
 
 	},
 };

@@ -4,10 +4,6 @@
   "description": "",
   "main": "mainBot.js",
   "scripts":{
-	"start": "node deploy-commands.js && node mainBot.js"
-  },
-  "engines":{
-	  "node": "16.13.1"
   },
   "keywords": [],
   "author": "",

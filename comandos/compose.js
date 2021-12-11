@@ -13,11 +13,22 @@ module.exports = {
 	.setRequired(true)),
 	async execute(interaction) 
 	{
-		const composName = interaction.options.getString('nombre');
+		try
+		{
+			const composName = interaction.options.getString('nombre');
 
-		const res = await pool.query('SELECT cs.nombre_composicion, c.nombre_compositor, c.edad, a.nombre_anime FROM Composiciones AS cs, Compositor AS c, Anime AS a WHERE cs.nombre_composicion LIKE '  + "'%" + `${composName}` + "%' " +  'AND cs.id_compositor = c.id AND a.id_compositor = c.id;');
+			const res = await pool.query('SELECT cs.nombre_composicion, c.nombre_compositor, c.edad, a.nombre_anime FROM Composiciones AS cs, Compositor AS c, Anime AS a WHERE cs.nombre_composicion LIKE '  + "'%" + `${composName}` + "%' " +  'AND cs.id_compositor = c.id AND a.id_compositor = c.id;');
 
-		await interaction.editReply("Informacion sobre la composicion: \n" + "\n-Nombre composicion: " + `${res.rows[0].nombre_composicion}` + "\n" + "\n-Compositor: " + `${res.rows[0].nombre_compositor}` + "\n" + "\n-Edad: " + `${res.rows[0].edad}` + "\n\n-Anime de la composicion: " + `${res.rows[0].nombre_anime}`);
+			await interaction.editReply("Informacion sobre la composicion: \n" + "\n-Nombre composicion: " + `${res.rows[0].nombre_composicion}` + "\n" + "\n-Compositor: " + `${res.rows[0].nombre_compositor}` + "\n" + "\n-Edad: " + `${res.rows[0].edad}` + "\n\n-Anime de la composicion: " + `${res.rows[0].nombre_anime}`);
+
+		}
+		catch (error)
+		{
+			console.log(error);
+			await interaction.editReply("Error: Intenta nuevamente");
+		}
 	
 	},
 };
+
+

@@ -16,34 +16,50 @@ module.exports = {
 
 	async execute(interaction) 
 	{
-		const genero = interaction.options.getString('genero');
-		const year = interaction.options.getString('año');
-
-		if(genero != null)
+		try
 		{
-			const res1 = await pool.query('SELECT nombre_anime, calificacion, year_emision FROM Anime WHERE genero = ' + "'" +`${genero}` + "'" +'ORDER BY calificacion DESC;');
-			var filaGenero = "";
-			res1.rows.forEach(element => (filaGenero = filaGenero + "| -Nombre: " + `${element.nombre_anime}` + " | -Calificacion: "+ `${element.calificacion}` + " | -Año emision: " + `${element.year_emision}` + " |" + "\n\n"));
+			const genero = interaction.options.getString('genero');
+			const year = interaction.options.getString('año');
 
-			await interaction.editReply("Ranking genero " + genero + ":\n\n" + filaGenero);
+			if(genero != null)
+			{
+				const res1 = await pool.query('SELECT nombre_anime, calificacion, year_emision FROM Anime WHERE genero = ' + "'" +`${genero}` + "'" +'ORDER BY calificacion DESC;');
+				var filaGenero = "";
+				res1.rows.forEach(element => (filaGenero = filaGenero + "| -Nombre: " + `${element.nombre_anime}` + " | -Calificacion: "+ `${element.calificacion}` + " | -Año emision: " + `${element.year_emision}` + " |" + "\n\n"));
+
+				if(res1.rows.length != 0)
+				{
+					await interaction.editReply("Ranking genero " + genero + ":\n\n" + filaGenero);		
+				}
+
+				else throw new error('Genero no esta en la bdd');
+			}
+
+			else if(year != null)
+			{
+				const res2 = await pool.query('SELECT nombre_anime, calificacion, genero FROM Anime WHERE year_emision = ' + `${year}` + 'ORDER BY calificacion DESC;');
+
+				var filaYear = "";
+				res2.rows.forEach(element => (filaYear = filaYear + "| -Nombre: " + `${element.nombre_anime}` + " | -Calificacion: "+ `${element.calificacion}` + " | -Genero: " + `${element.genero}` + " |" + "\n\n"));
+
+				if(res2.rows.length != 0)
+				{
+					await interaction.editReply("Ranking animes del " + year + ":\n\n" + filaYear);
+				}
+
+				else throw new error('Año no esta en la bdd');
+			}
+
+			else
+			{
+					await interaction.editReply("Error: Intenta nuevamente");			
+			}
+
 		}
-
-		else if(year != null)
+		catch (error)
 		{
-			const res2 = await pool.query('SELECT nombre_anime, calificacion, genero FROM Anime WHERE year_emision = ' + `${year}` + 'ORDER BY calificacion DESC;');
-
-			var filaYear = "";
-			res2.rows.forEach(element => (filaYear = filaYear + "| -Nombre: " + `${element.nombre_anime}` + " | -Calificacion: "+ `${element.calificacion}` + " | -Genero: " + `${element.genero}` + " |" + "\n\n"));
-
-			await interaction.editReply("Ranking animes del " + year + ":\n\n" + filaYear);
-
-		}
-
-		else
-		{
-				await interaction.editReply("Error en la ejecucion del comando, intente de nuevo");
-
-		
+			console.log(error);
+			await interaction.editReply("Error: Intenta nuevamente");
 		}
 
 	},
